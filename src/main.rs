@@ -11,6 +11,7 @@ mod prelude {
     pub use bracket_lib::prelude::*;
     pub use legion::*;
     pub use legion::world::SubWorld;
+    pub use legion::systems::CommandBuffer;
     pub const SCREEN_WIDTH: i32 = 80;
     pub const SCREEN_HEIGHT: i32 = 50;
     pub const DISPLAY_WIDTH: i32 = SCREEN_WIDTH / 2;
@@ -38,6 +39,12 @@ impl State {
         let mut rng = RandomNumberGenerator::new();
         let map_builder = MapBuilder::new(&mut rng);
         spawn_player(&mut ecs, map_builder.player_start);
+        map_builder.rooms
+            .iter()
+            .skip(1)
+            .map(|r| r.center())
+            .for_each(|pos| spawn_monster(&mut ecs, &mut rng, pos));
+
         // if nothing is inserted to resources the following error gets thrown from legion
         // thread '<unnamed>' panicked at 'called `Option::unwrap()` on a `None` value'
         resources.insert(map_builder.map);
