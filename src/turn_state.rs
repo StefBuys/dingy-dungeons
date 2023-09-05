@@ -7,4 +7,3 @@ pub enum TurnState {
     GameOver,
     Victory,
 }
-

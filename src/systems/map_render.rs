@@ -11,13 +11,15 @@ pub fn map_render(ecs: &SubWorld, #[resource] map: &Map, #[resource] camera: &Ca
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(0);
 
-    for y in camera.top_y ..= camera.bottom_y {
-        for x in camera.left_x .. camera.right_x {
+    for y in camera.top_y..=camera.bottom_y {
+        for x in camera.left_x..camera.right_x {
             let pt = Point::new(x, y);
             let offset = Point::new(camera.left_x, camera.top_y);
-            
+
             let idx = map_idx(x, y);
-            if map.in_bounds(pt) && (player_fov.visible_tiles.contains(&pt) | map.revealed_tiles[idx]) {
+            if map.in_bounds(pt)
+                && (player_fov.visible_tiles.contains(&pt) | map.revealed_tiles[idx])
+            {
                 let tint = if player_fov.visible_tiles.contains(&pt) {
                     WHITE
                 } else {
@@ -25,24 +27,10 @@ pub fn map_render(ecs: &SubWorld, #[resource] map: &Map, #[resource] camera: &Ca
                 };
                 match map.tiles[idx] {
                     TileType::Floor => {
-                        draw_batch.set(
-                            pt - offset,
-                            ColorPair::new(
-                                tint,
-                                BLACK,
-                            ),
-                            to_cp437('.')
-                        );
+                        draw_batch.set(pt - offset, ColorPair::new(tint, BLACK), to_cp437('.'));
                     }
                     TileType::Wall => {
-                        draw_batch.set(
-                            pt - offset,
-                            ColorPair::new(
-                                tint,
-                                BLACK,
-                            ),
-                            to_cp437('#')
-                        );
+                        draw_batch.set(pt - offset, ColorPair::new(tint, BLACK), to_cp437('#'));
                     }
                 }
             }
@@ -51,4 +39,3 @@ pub fn map_render(ecs: &SubWorld, #[resource] map: &Map, #[resource] camera: &Ca
 
     draw_batch.submit(0).expect("Batch error");
 }
-            

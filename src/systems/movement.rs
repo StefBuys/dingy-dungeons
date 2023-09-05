@@ -30,5 +30,3 @@ pub fn movement(
     }
     commands.remove(*entity);
 }
-
-

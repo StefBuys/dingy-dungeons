@@ -34,4 +34,3 @@ pub fn combat(ecs: &mut SubWorld, commands: &mut CommandBuffer) {
         commands.remove(*message);
     });
 }
-

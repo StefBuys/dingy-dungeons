@@ -87,7 +87,7 @@ impl MapBuilder {
         mb.build_random_rooms(rng);
         mb.build_corridors(rng);
         mb.player_start = mb.rooms[0].center();
-        
+
         let dijkstra_map = DijkstraMap::new(
             SCREEN_WIDTH,
             SCREEN_HEIGHT,
@@ -98,12 +98,14 @@ impl MapBuilder {
 
         const UNREACHABLE: &f32 = &f32::MAX;
         mb.amulet_start = mb.map.index_to_point2d(
-            dijkstra_map.map
+            dijkstra_map
+                .map
                 .iter()
                 .enumerate()
                 .filter(|(_, dist)| *dist < UNREACHABLE)
                 .max_by(|a, b| a.1.partial_cmp(b.1).unwrap())
-                .unwrap().0
+                .unwrap()
+                .0,
         );
         mb
     }

@@ -10,10 +10,8 @@ pub fn player_input(
     commands: &mut CommandBuffer,
     #[resource] key: &Option<VirtualKeyCode>,
     #[resource] turn_state: &mut TurnState,
-)
-{
-    let mut players = <(Entity, &Point)>::query()
-        .filter(component::<Player>());
+) {
+    let mut players = <(Entity, &Point)>::query().filter(component::<Player>());
 
     if let Some(key) = key {
         let delta = match key {
@@ -26,7 +24,7 @@ pub fn player_input(
 
         let (player_entity, destination) = players
             .iter(ecs)
-            .find_map(|(entity, pos)| Some((*entity, *pos + delta)) )
+            .find_map(|(entity, pos)| Some((*entity, *pos + delta)))
             .unwrap();
 
         let mut enemies = <(Entity, &Point)>::query().filter(component::<Enemy>());
@@ -35,25 +33,27 @@ pub fn player_input(
             let mut hit_something = false;
             enemies
                 .iter(ecs)
-                .filter(|(_, pos)| {
-                    **pos == destination
-                })
+                .filter(|(_, pos)| **pos == destination)
                 .for_each(|(entity, _)| {
                     hit_something = true;
                     did_something = true;
-                    commands
-                        .push(((), WantsToAttack {
+                    commands.push((
+                        (),
+                        WantsToAttack {
                             attacker: player_entity,
                             victim: *entity,
-                        }));
+                        },
+                    ));
                 });
             if !hit_something {
                 did_something = true;
-                commands
-                    .push(((), WantsToMove {
+                commands.push((
+                    (),
+                    WantsToMove {
                         entity: player_entity,
                         destination,
-                    }));
+                    },
+                ));
             }
         }
         if !did_something {
@@ -62,10 +62,9 @@ pub fn player_input(
                 .unwrap()
                 .get_component_mut::<Health>()
             {
-                health.current = i32::min(health.max, health.current+1);
+                health.current = i32::min(health.max, health.current + 1);
             }
         }
         *turn_state = TurnState::PlayerTurn;
     }
 }
-

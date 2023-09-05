@@ -1,16 +1,16 @@
 use crate::prelude::*;
 
-mod player_input;
-mod map_render;
-mod entity_render;
-mod random_move;
-mod end_turn;
-mod movement;
-mod hud;
-mod tooltips;
-mod combat;
 mod chasing;
+mod combat;
+mod end_turn;
+mod entity_render;
 mod fov;
+mod hud;
+mod map_render;
+mod movement;
+mod player_input;
+mod random_move;
+mod tooltips;
 
 pub fn build_input_scheduler() -> Schedule {
     Schedule::builder()
@@ -56,4 +56,3 @@ pub fn build_monster_scheduler() -> Schedule {
         .add_system(end_turn::end_turn_system())
         .build()
 }
-
