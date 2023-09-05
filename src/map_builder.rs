@@ -22,7 +22,7 @@ impl MapBuilder {
                 rng.range(2, 10),
             );
             let mut overlap = false;
-            for r in self.rooms.iter() {
+            for r in &self.rooms {
                 if r.intersect(&room) {
                     overlap = true;
                 }
@@ -43,7 +43,7 @@ impl MapBuilder {
         use std::cmp::{max, min};
         for y in min(y1, y2)..=max(y1, y2) {
             if let Some(idx) = self.map.try_idx(Point::new(x, y)) {
-                self.map.tiles[idx as usize] = TileType::Floor;
+                self.map.tiles[idx] = TileType::Floor;
             }
         }
     }
@@ -52,7 +52,7 @@ impl MapBuilder {
         use std::cmp::{max, min};
         for x in min(x1, x2)..=max(x1, x2) {
             if let Some(idx) = self.map.try_idx(Point::new(x, y)) {
-                self.map.tiles[idx as usize] = TileType::Floor;
+                self.map.tiles[idx] = TileType::Floor;
             }
         }
     }
@@ -91,7 +91,7 @@ impl MapBuilder {
         let dijkstra_map = DijkstraMap::new(
             SCREEN_WIDTH,
             SCREEN_HEIGHT,
-            &vec![mb.map.point2d_to_index(mb.player_start)],
+            &[mb.map.point2d_to_index(mb.player_start)],
             &mb.map,
             1024.0,
         );
