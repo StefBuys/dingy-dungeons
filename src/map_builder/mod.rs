@@ -1,4 +1,8 @@
+#![warn(clippy::pedantic)]
+mod empty;
+
 use crate::prelude::*;
+use empty::EmptyArchitect;
 
 trait MapArchitect {
     fn new(&mut self, rng: &mut RandomNumberGenerator) -> MapBuilder;
@@ -104,18 +108,23 @@ impl MapBuilder {
     }
 
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-        let mut mb = MapBuilder {
-            map: Map::new(),
-            rooms: Vec::new(),
-            player_start: Point::zero(),
-            amulet_start: Point::zero(),
-        };
-
-        mb.fill(TileType::Wall);
-        mb.build_random_rooms(rng);
-        mb.build_corridors(rng);
-        mb.player_start = mb.rooms[0].center();
-
-        mb
+        let mut architect = EmptyArchitect{};
+        architect.new(rng)
     }
+
+   // pub fn new(rng: &mut RandomNumberGenerator) -> Self {
+   //     let mut mb = MapBuilder {
+   //         map: Map::new(),
+   //         rooms: Vec::new(),
+   //         player_start: Point::zero(),
+   //         amulet_start: Point::zero(),
+   //     };
+
+   //     mb.fill(TileType::Wall);
+   //     mb.build_random_rooms(rng);
+   //     mb.build_corridors(rng);
+   //     mb.player_start = mb.rooms[0].center();
+
+   //     mb
+   // }
 }

@@ -1,7 +1,7 @@
 use crate::prelude::*;
 use super::MapArchitect;
 
-pub struct EmtpyArchitect {}
+pub struct EmptyArchitect {}
 
 impl MapArchitect for EmptyArchitect {
     fn new(&mut self, rng: &mut RandomNumberGenerator) -> MapBuilder {
