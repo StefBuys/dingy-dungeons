@@ -1,8 +1,12 @@
 #![warn(clippy::pedantic)]
-mod empty;
+mod automata;
+//mod empty;
+//mod rooms;
 
 use crate::prelude::*;
-use empty::EmptyArchitect;
+//use empty::EmptyArchitect;
+//use rooms::RoomsArchitect;
+use automata::CellularAutomataArchitect;
 
 trait MapArchitect {
     fn new(&mut self, rng: &mut RandomNumberGenerator) -> MapBuilder;
@@ -107,24 +111,48 @@ impl MapBuilder {
         }
     }
 
+    fn spawn_monsters(&self, start: &Point, rng: &mut RandomNumberGenerator) -> Vec<Point> {
+        const NUM_MONSTERS: usize = 50;
+        let mut spawnable_tiles: Vec<Point> = self
+            .map
+            .tiles
+            .iter()
+            .enumerate()
+            .filter(|(idx, t)| {
+                **t == TileType::Floor
+                    && DistanceAlg::Pythagoras.distance2d(*start, self.map.index_to_point2d(*idx))
+                        > 10.0
+            })
+            .map(|(idx, _)| self.map.index_to_point2d(idx))
+            .collect();
+
+        let mut spawns = Vec::new();
+        for _ in 0..NUM_MONSTERS {
+            let target_index = rng.random_slice_index(&spawnable_tiles).unwrap();
+            spawns.push(spawnable_tiles[target_index].clone());
+            spawnable_tiles.remove(target_index);
+        }
+        spawns
+    }
+
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-        let mut architect = EmptyArchitect{};
+        let mut architect = CellularAutomataArchitect {};
         architect.new(rng)
     }
 
-   // pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-   //     let mut mb = MapBuilder {
-   //         map: Map::new(),
-   //         rooms: Vec::new(),
-   //         player_start: Point::zero(),
-   //         amulet_start: Point::zero(),
-   //     };
+    // pub fn new(rng: &mut RandomNumberGenerator) -> Self {
+    //     let mut mb = MapBuilder {
+    //         map: Map::new(),
+    //         rooms: Vec::new(),
+    //         player_start: Point::zero(),
+    //         amulet_start: Point::zero(),
+    //     };
 
-   //     mb.fill(TileType::Wall);
-   //     mb.build_random_rooms(rng);
-   //     mb.build_corridors(rng);
-   //     mb.player_start = mb.rooms[0].center();
+    //     mb.fill(TileType::Wall);
+    //     mb.build_random_rooms(rng);
+    //     mb.build_corridors(rng);
+    //     mb.player_start = mb.rooms[0].center();
 
-   //     mb
-   // }
+    //     mb
+    // }
 }
