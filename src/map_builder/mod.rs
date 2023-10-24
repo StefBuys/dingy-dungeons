@@ -1,12 +1,14 @@
 #![warn(clippy::pedantic)]
-mod automata;
+//mod automata;
+mod drunkard;
 //mod empty;
 //mod rooms;
 
 use crate::prelude::*;
 //use empty::EmptyArchitect;
 //use rooms::RoomsArchitect;
-use automata::CellularAutomataArchitect;
+//use automata::CellularAutomataArchitect;
+use drunkard::DrunkardsWalkArchitect;
 
 trait MapArchitect {
     fn new(&mut self, rng: &mut RandomNumberGenerator) -> MapBuilder;
@@ -136,9 +138,14 @@ impl MapBuilder {
     }
 
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-        let mut architect = CellularAutomataArchitect {};
+        let mut architect = DrunkardsWalkArchitect {};
         architect.new(rng)
     }
+
+    //pub fn new(rng: &mut RandomNumberGenerator) -> Self {
+    //    let mut architect = CellularAutomataArchitect {};
+    //    architect.new(rng)
+    //}
 
     // pub fn new(rng: &mut RandomNumberGenerator) -> Self {
     //     let mut mb = MapBuilder {
