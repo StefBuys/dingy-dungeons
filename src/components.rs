@@ -37,6 +37,11 @@ pub struct Health {
     pub max: i32,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ProvidesHealing{
+    pub amount: i32
+}
+
 #[derive(Clone, PartialEq)]
 pub struct Name(pub String);
 
@@ -52,6 +57,9 @@ pub struct FieldOfView {
     pub radius: i32,
     pub is_dirty: bool,
 }
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ProvidesDungeonMap;
 
 impl FieldOfView {
     pub fn new(radius: i32) -> Self {
@@ -70,3 +78,4 @@ impl FieldOfView {
         }
     }
 }
+
