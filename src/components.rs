@@ -7,6 +7,12 @@ pub struct Render {
     pub glyph: FontCharType,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ActivateItem {
+    pub used_by: Entity,
+    pub item: Entity,
+}
+
 #[derive(Clone, PartialEq)]
 pub struct Carried(pub Entity);
 
