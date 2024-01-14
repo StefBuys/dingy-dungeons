@@ -7,6 +7,9 @@ pub struct Render {
     pub glyph: FontCharType,
 }
 
+#[derive(Clone, PartialEq)]
+pub struct Carried(pub Entity);
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Player;
 
