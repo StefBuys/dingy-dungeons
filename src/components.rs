@@ -17,7 +17,9 @@ pub struct ActivateItem {
 pub struct Carried(pub Entity);
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Player;
+pub struct Player{
+    pub map_level: u32
+};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Enemy;
