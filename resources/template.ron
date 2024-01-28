@@ -55,7 +55,7 @@ Templates(
         Template(
             entity_type: Item,
             name: "Rusty Sword", 
-            glyph: '\', 
+            glyph: '/', 
             levels: [0, 1, 2],
             frequency: 1,
             base_damage: Some(1),
