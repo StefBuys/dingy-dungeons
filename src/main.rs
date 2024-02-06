@@ -61,7 +61,7 @@ impl State {
         // thread '<unnamed>' panicked at 'called `Option::unwrap()` on a `None` value'
         resources.insert(map_builder.map);
         resources.insert(Camera::new(map_builder.player_start));
-        resources.insert(TurnState::AwaitingInput);
+        resources.insert(TurnState::Active);
         resources.insert(map_builder.theme);
 
         Self {
@@ -146,7 +146,7 @@ impl State {
         
         self.resources.insert(map_builder.map);
         self.resources.insert(Camera::new(map_builder.player_start));
-        self.resources.insert(TurnState::AwaitingInput);
+        self.resources.insert(TurnState::Active);
         self.resources.insert(map_builder.theme);
     }
 
@@ -204,7 +204,7 @@ impl State {
 
         self.resources.insert(map_builder.map);
         self.resources.insert(Camera::new(map_builder.player_start));
-        self.resources.insert(TurnState::AwaitingInput);
+        self.resources.insert(TurnState::Active);
         self.resources.insert(map_builder.theme);
     }
 }
@@ -222,14 +222,11 @@ impl GameState for State {
         self.resources.insert(Point::from_tuple(ctx.mouse_pos()));
         let current_state = *self.resources.get::<TurnState>().unwrap();
         match current_state {
-            TurnState::AwaitingInput => self
-                .input_systems
-                .execute(&mut self.ecs, &mut self.resources),
-            TurnState::PlayerTurn => {
+            TurnState::Active => {
+                self.input_systems
+                    .execute(&mut self.ecs, &mut self.resources);
                 self.player_systems
                     .execute(&mut self.ecs, &mut self.resources);
-            }
-            TurnState::MonsterTurn => {
                 self.monster_systems
                     .execute(&mut self.ecs, &mut self.resources);
             }
