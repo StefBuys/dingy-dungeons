@@ -13,6 +13,8 @@ mod random_move;
 mod tooltips;
 mod use_item;
 
+// todo: update the schedulers to have an input, logic and rendering scheduler
+// todo: look at legions way of handling realtime/ticks to ensure monsters aren't insanely fast
 pub fn build_input_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(player_input::player_input_system())
