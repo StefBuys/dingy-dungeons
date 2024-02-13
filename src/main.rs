@@ -17,6 +17,7 @@ mod prelude {
     pub const SCREEN_HEIGHT: i32 = 50;
     pub const DISPLAY_WIDTH: i32 = SCREEN_WIDTH / 2;
     pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT / 2;
+    pub const TURN_TIME: f32 = 200.0;
     pub use crate::camera::*;
     pub use crate::components::*;
     pub use crate::map::*;
@@ -32,9 +33,12 @@ use std::collections::HashSet;
 struct State {
     ecs: World,
     resources: Resources,
-    input_systems: Schedule,
-    player_systems: Schedule,
+    frame_time: f32,
+    // input_systems: Schedule,
+    // player_systems: Schedule,
     monster_systems: Schedule,
+    realtime_systems: Schedule,
+    render_systems: Schedule,
 }
 
 impl State {
@@ -67,9 +71,12 @@ impl State {
         Self {
             ecs,
             resources,
-            input_systems: build_input_scheduler(),
-            player_systems: build_player_scheduler(),
+            frame_time: 0.0,
+            // input_systems: build_input_scheduler(),
+            // player_systems: build_player_scheduler(),
             monster_systems: build_monster_scheduler(),
+            realtime_systems: build_realtime_scheduler(),
+            render_systems: build_render_scheduler(),
         }
     }
 
@@ -143,7 +150,7 @@ impl State {
         //     .for_each(|pos| spawn_entity(&mut self.ecs, &mut rng, *pos));
 
         spawn_level(&mut self.ecs, &mut rng, 0, &map_builder.monster_spawns);
-        
+
         self.resources.insert(map_builder.map);
         self.resources.insert(Camera::new(map_builder.player_start));
         self.resources.insert(TurnState::Active);
@@ -163,7 +170,9 @@ impl State {
             .iter(&self.ecs)
             .filter(|(_e, carry)| carry.0 == player_entity)
             .map(|(e, _carry)| *e)
-            .for_each(|e| { entities_to_keep.insert(e); });
+            .for_each(|e| {
+                entities_to_keep.insert(e);
+            });
 
         let mut cb = CommandBuffer::new(&mut self.ecs);
         for e in Entity::query().iter(&self.ecs) {
@@ -200,7 +209,12 @@ impl State {
         //     .iter()
         //     .for_each(|pos| spawn_entity(&mut self.ecs, &mut rng, *pos));
 
-        spawn_level(&mut self.ecs, &mut rng, map_level as usize, &map_builder.monster_spawns);
+        spawn_level(
+            &mut self.ecs,
+            &mut rng,
+            map_level as usize,
+            &map_builder.monster_spawns,
+        );
 
         self.resources.insert(map_builder.map);
         self.resources.insert(Camera::new(map_builder.player_start));
@@ -217,18 +231,26 @@ impl GameState for State {
         ctx.cls();
         ctx.set_active_console(2);
         ctx.cls();
+        self.frame_time += ctx.frame_time_ms;
         self.resources.insert(ctx.key);
         ctx.set_active_console(0);
         self.resources.insert(Point::from_tuple(ctx.mouse_pos()));
         let current_state = *self.resources.get::<TurnState>().unwrap();
         match current_state {
             TurnState::Active => {
-                self.input_systems
+                // self.input_systems
+                //     .execute(&mut self.ecs, &mut self.resources);
+                // self.player_systems
+                //     .execute(&mut self.ecs, &mut self.resources);
+                self.realtime_systems
                     .execute(&mut self.ecs, &mut self.resources);
-                self.player_systems
+                self.render_systems
                     .execute(&mut self.ecs, &mut self.resources);
-                self.monster_systems
-                    .execute(&mut self.ecs, &mut self.resources);
+                if self.frame_time > TURN_TIME {
+                    self.frame_time = 0.0;
+                    self.monster_systems
+                        .execute(&mut self.ecs, &mut self.resources);
+                }
             }
             TurnState::GameOver => self.game_over(ctx),
             TurnState::Victory => self.victory(ctx),
